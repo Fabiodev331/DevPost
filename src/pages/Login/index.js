@@ -5,10 +5,32 @@ import {Container, Title, Input, Button, ButtonText, SignUpButton, SignUpText} f
 
 function Login(){
     const [login, setLogin] = useState(true);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     function toggleLogin(){
         setLogin(!login)
+
+        setName('');
+        setEmail('');
+        setPassword('');
     }
+
+    function handleSignIn(){
+        if(email === '' || password === ''){
+            console.log("PREENCHA TODOS OS CAMPOS PARA ENTRAR")
+            return;
+        }
+    }
+    
+    function handleSignUp(){
+        if(name === '' || email === '' || password === ''){
+            console.log("PREENCHA TODOS OS CAMPOS PARA CADASTRAR")
+            return;
+        }
+    }
+
 
     if(login){
         return(
@@ -19,13 +41,17 @@ function Login(){
                 
                 <Input 
                     placeholder="Seuemail@teste.com"
+                    value={email}
+                    onChangeText={(text) => setEmail(text)}
                 />
     
                 <Input 
                     placeholder="******"
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
                 />
     
-                <Button>
+                <Button onPress={handleSignIn} >
                     <ButtonText>Acessar</ButtonText>
                 </Button>
     
@@ -45,17 +71,23 @@ function Login(){
 
             <Input 
                 placeholder="Seu nome"
+                value={name}
+                onChangeText={(text) => setName(text)}
             />
 
            <Input 
                 placeholder="Seuemail@teste.com"
+                value={email}
+                onChangeText={(text) => setEmail(text)}
             />
 
             <Input 
                 placeholder="******"
+                value={password}
+                onChangeText={(text) => setPassword(text)}
             />
 
-            <Button>
+            <Button onPress={handleSignUp} >
                 <ButtonText>Cadastrar</ButtonText>
             </Button>
 
