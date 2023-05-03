@@ -1,13 +1,16 @@
-import React, { useState } from "react";
-import { View, Text } from "react-native";
+import React, { useState, useContext } from "react";
+import { View, Text, ActivityIndicator } from "react-native";
 
 import {Container, Title, Input, Button, ButtonText, SignUpButton, SignUpText} from '../Login/styles';
+
+import { AuthContext } from "../../contexts/auth";
 
 function Login(){
     const [login, setLogin] = useState(true);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { SignUp, SignIn, loading } = useContext(AuthContext);
 
     function toggleLogin(){
         setLogin(!login)
@@ -17,18 +20,22 @@ function Login(){
         setPassword('');
     }
 
-    function handleSignIn(){
+    async function handleSignIn(){
         if(email === '' || password === ''){
             console.log("PREENCHA TODOS OS CAMPOS PARA ENTRAR")
             return;
         }
+
+        await SignIn(email, password);
     }
     
-    function handleSignUp(){
+    async function handleSignUp(){
         if(name === '' || email === '' || password === ''){
             console.log("PREENCHA TODOS OS CAMPOS PARA CADASTRAR")
             return;
         }
+
+        await SignUp(email, password, name);
     }
 
 
@@ -52,7 +59,10 @@ function Login(){
                 />
     
                 <Button onPress={handleSignIn} >
-                    <ButtonText>Acessar</ButtonText>
+                    {loading ? <ActivityIndicator size={20} color='#FFF' /> 
+                    : <ButtonText>Acessar</ButtonText>
+                    }
+                    
                 </Button>
     
                 <SignUpButton onPress={toggleLogin} >
@@ -88,7 +98,10 @@ function Login(){
             />
 
             <Button onPress={handleSignUp} >
-                <ButtonText>Cadastrar</ButtonText>
+                {loading ? <ActivityIndicator size={20} color='#FFF' />
+                    : <ButtonText>Cadastrar</ButtonText>
+                }
+                
             </Button>
 
             <SignUpButton onPress={toggleLogin} >
