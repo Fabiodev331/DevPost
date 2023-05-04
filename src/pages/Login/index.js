@@ -10,7 +10,7 @@ function Login(){
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { SignUp, SignIn, loading } = useContext(AuthContext);
+    const { SignUp, SignIn, loadingAuth } = useContext(AuthContext);
 
     function toggleLogin(){
         setLogin(!login)
@@ -56,10 +56,11 @@ function Login(){
                     placeholder="******"
                     value={password}
                     onChangeText={(text) => setPassword(text)}
+                    secureTextEntry={true}
                 />
     
                 <Button onPress={handleSignIn} >
-                    {loading ? <ActivityIndicator size={20} color='#FFF' /> 
+                    {loadingAuth ? <ActivityIndicator size={20} color='#FFF' /> 
                     : <ButtonText>Acessar</ButtonText>
                     }
                     
@@ -95,10 +96,11 @@ function Login(){
                 placeholder="******"
                 value={password}
                 onChangeText={(text) => setPassword(text)}
+                secureTextEntry={true}
             />
 
             <Button onPress={handleSignUp} >
-                {loading ? <ActivityIndicator size={20} color='#FFF' />
+                {loadingAuth ? <ActivityIndicator size={20} color='#FFF' />
                     : <ButtonText>Cadastrar</ButtonText>
                 }
                 
