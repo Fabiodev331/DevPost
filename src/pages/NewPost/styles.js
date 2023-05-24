@@ -23,5 +23,4 @@ align-items: center;
 
 export const ButtonText = styled.Text`
 color: #FFF;
-font-size: 15;
 `;
