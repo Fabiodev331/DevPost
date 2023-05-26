@@ -47,7 +47,7 @@ function Login(){
                 </Title>
                 
                 <Input 
-                    placeholder="Seuemail@teste.com"
+                    placeholder="Email@teste.com"
                     value={email}
                     onChangeText={(text) => setEmail(text)}
                 />

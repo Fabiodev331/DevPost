@@ -20,5 +20,5 @@ z-index: 99;
 
 export const ListPosts = styled.FlatList`
 flex: 1;
-background-color: #f1f1f1;
+background-color: #e9e9e9;
 `;
