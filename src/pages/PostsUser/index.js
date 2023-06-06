@@ -44,7 +44,6 @@ function PostsUser(){
                 })
 
                 if(isActive){
-                    console.log(postList);
                     setPosts(postList);
                     setLoading(false);
                 }
