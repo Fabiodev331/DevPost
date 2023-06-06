@@ -10,48 +10,120 @@ import Header from "../../componets/Header";
 import PostList from '../../componets/PostList';
 
 function Home(){
-const navigation = useNavigation();
-const { user } = useContext(AuthContext);
+    const navigation = useNavigation();
+    const { user } = useContext(AuthContext);
 
-const [posts, setPosts] = useState ([])
-const [loading, setLoading] = useState(true);
+    const [posts, setPosts] = useState ([])
+    const [loading, setLoading] = useState(true);
 
-useFocusEffect(
-    useCallback(()=>{
-        let isActive = true;
+    const [loadingRefresh, setLoadingRefrash] = useState(false);
+    const [lastItem, setLastItem] = useState('');
+    const [emptyList, setEmptyList] = useState(false);
 
-        function fetchPosts(){
-            firestore().collection('posts')
+
+    useFocusEffect(
+        useCallback(()=>{
+            let isActive = true;
+
+            function fetchPosts(){
+                firestore().collection('posts')
+                .orderBy('created', 'desc')
+                .limit(5)
+                .get()
+                .then((snapshot ) => {
+
+                    if(isActive){
+                        setPosts([]);
+                        const postList = [];
+
+                        snapshot.docs.map( u => {
+                            postList.push({
+                                ...u.data(),
+                                id: u.id,
+                            })
+                        })
+
+                        setPosts(postList);
+                        setLastItem(snapshot.docs[snapshot.docs.length -1]);
+                        setEmptyList(!!snapshot.empty);
+                        setLoading(false);
+                    }
+                })
+            }
+
+            fetchPosts();
+
+            return ()=>{
+                isActive = false;
+            }
+
+        }, [])
+    )
+
+    async function handleRefreshPost(){
+        setLoadingRefrash(true);
+
+        firestore().collection('posts')
             .orderBy('created', 'desc')
             .limit(5)
             .get()
             .then((snapshot ) => {
 
-                if(isActive){
-                    setPosts([]);
-                    const postList = [];
+                    
+                setPosts([]);
+                const postList = [];
 
-                    snapshot.docs.map( u => {
-                        postList.push({
-                            ...u.data(),
-                            id: u.id,
-                        })
+                snapshot.docs.map( u => {
+                    postList.push({
+                        ...u.data(),
+                        id: u.id,
                     })
+                })
 
-                    setPosts(postList);
-                    setLoading(false);
-                }
+                setPosts(postList);
+                setLastItem(snapshot.docs[snapshot.docs.length -1]);
+                setEmptyList(false);
+                setLoading(false);
+                    
             })
+
+            setLoadingRefrash(false);
+
+    }
+
+    async function getListPost(){
+        if(emptyList){
+            setLoading(false);
+            return null;
         }
+        
+        if(loading) return;
 
-        fetchPosts();
+        firestore().collection('posts')
+            .orderBy('created', 'desc')
+            .limit(5)
+            .startAfter(lastItem)
+            .get()
+            .then((snapshot) => {
+                const postList = [];
 
-        return ()=>{
-            isActive = false;
-        }
+                snapshot.docs.map( u => {
+                    postList.push({
+                        ...u.data(),
+                        id: u.id,
+                    })
+                })
 
-    }, [])
-)
+                setEmptyList(!!snapshot.empty);
+                setLastItem(snapshot.docs[snapshot.docs.length -1]);
+                setPosts(oldPosts => [...oldPosts, ...postList]);
+                setLoading(false);
+                    
+            })
+
+            setLoadingRefrash(false);
+
+    }
 
     return(
         <Container>
@@ -71,6 +143,11 @@ useFocusEffect(
                             userId={user?.uid}
                         />
                     )}
+
+                    refreshing={loadingRefresh}
+                    onRefresh={ handleRefreshPost }
+                    onEndReached={() => getListPost()}
+                    onEndReachedThreshold={0.1}
                 />
             )}
 
