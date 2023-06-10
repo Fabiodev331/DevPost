@@ -34,16 +34,20 @@ function Profile(){
     const [openModal, setOpenModal] = useState(false);
 
     useEffect(() => {
+        let isActive = true;
         async function loadingAvatar(){
             try{
-                let response = await storage().ref('users').child(user?.uid).getDownloadURL();
+                if(isActive){
+                    let response = await storage().ref('users').child(user?.uid).getDownloadURL();
+                    setUrl(response);
+                }
             }catch(err){
                 console.log(err)
             }
         }
         loadingAvatar();
 
-        return () => loadingAvatar();
+        return () => isActive = false;
     }, [])
 
     async function handleSignOut(){
